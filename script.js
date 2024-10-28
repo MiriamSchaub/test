@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('generate-pdf').addEventListener('click', function() {
         const doc = new jsPDF();
-        const logoUrl = 'https://digibrave-bayern.de/wp-content/uploads/2024/04/230620-digiBRAVE-Bayern-Logo-L-RGB.png';
+        const logoUrl = 'https://github.com/MiriamSchaub/test/blob/main/230620-digiBRAVE-Bayern-Logo-L-RGB.png';
         const title = "Ihre persönlichen Stressförderer";
         const text = "Was sind Ihre persönlichen stressfördernden Überzeugungen?";
 

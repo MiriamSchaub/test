@@ -1,0 +1,90 @@
+.radio-matrix {
+    margin: 20px 0;
+}
+.radio-matrix table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.radio-matrix th, .radio-matrix td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+.radio-matrix th:first-child {
+    text-align: left;
+}
+.radio-matrix th {
+    background-color: #f1f1f1;
+}
+.radio-matrix td:first-child {
+    text-align: left;
+}
+.radio-matrix th, .radio-matrix td {
+    width: 10%; /* Standardbreite für alle Spalten */
+}
+.radio-matrix th:first-child, .radio-matrix td:first-child {
+    width: 50%; /* Breite der ersten Spalte */
+}
+.progress {
+    margin-bottom: 20px; /* Abstand zwischen den Ladebalken */
+}
+
+.progress-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.progress-bar {
+    background-color: #f1f1f1; /* Hintergrundfarbe der Ladebalken */
+    height: 20px; /* Höhe der Ladebalken */
+    border-radius: 10px; /* Abrundung der Ecken */
+    overflow: hidden; /* Überlauf verstecken, um die abgerundeten Ecken zu zeigen */
+}
+
+.progress-bar-inner {
+    height: 100%;
+    background-color: #1B5681; /* Farbe der erreichten Punktzahl */
+    transition: width 0.3s ease; /* Übergangseffekt für die Breite */
+}
+
+.total-progress {
+    margin-top: 20px; /* Abstand zur Gesamtanzeige */
+}
+/* CSS für das Accordion */
+.accordion {
+	margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.accordion-button {
+    background-color: white;
+    color: #1B5681;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: background-color 0.3s;
+	font-size: 14px
+}
+
+.accordion-button:hover {
+    background-color: #F1F1F1;
+}
+
+.accordion-icon {
+    float: right;
+}
+
+.panel {
+    padding: 0 18px;
+    background-color: white;
+    display: none;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+.panel.active {
+    display: block;
+}

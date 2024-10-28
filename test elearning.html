@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stressförderer-Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .radio-matrix { max-width: 600px; margin: 0 auto; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 10px; text-align: center; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        .progress { display: flex; align-items: center; margin-top: 10px; }
+        .progress-bar { width: 80%; height: 20px; background-color: #ddd; border-radius: 5px; overflow: hidden; margin-right: 10px; }
+        .progress-bar-inner { height: 100%; background-color: #4caf50; }
+        .accordion { border: 1px solid #ddd; border-radius: 5px; margin-bottom: 5px; }
+        .accordion-button { background-color: #f2f2f2; padding: 10px; width: 100%; text-align: left; border: none; outline: none; cursor: pointer; }
+        .accordion-button.active, .accordion-button:hover { background-color: #ddd; }
+        .accordion-icon { float: right; }
+        .panel { padding: 10px; display: none; background-color: #f9f9f9; }
+        button { margin: 5px; padding: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="radio-matrix">
+    <form id="quiz-form">
+        <table id="radio-matrix-table">
+            <thead>
+                <tr>
+                    <th>Meine stressfördernden Überzeugungen</th>
+                    <th>Stimme völlig zu</th>
+                    <th>Stimme tendenziell zu</th>
+                    <th>Stimme eher nicht zu</th>
+                    <th>Stimme überhaupt nicht zu</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Ich will es allen recht machen.</td>
+                    <td><input type="radio" name="q1" value="3"></td>
+                    <td><input type="radio" name="q1" value="2"></td>
+                    <td><input type="radio" name="q1" value="1"></td>
+                    <td><input type="radio" name="q1" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Wenn ich was anfange, bringe ich es auch zu Ende.</td>
+                    <td><input type="radio" name="q2" value="3"></td>
+                    <td><input type="radio" name="q2" value="2"></td>
+                    <td><input type="radio" name="q2" value="1"></td>
+                    <td><input type="radio" name="q2" value="0"></td>
+                </tr>
+                <tr>
+                    <td>Wer auf andere zählt, wird im Stich gelassen.</td>
+                    <td><input type="radio" name="q3" value="3"></td>
+                    <td><input type="radio" name="q3" value="2"></td>
+                    <td><input type="radio" name="q3" value="1"></td>
+                    <td><input type="radio" name="q3" value="0"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" onclick="submitQuiz()">Auswerten</button>
+        <button type="button" id="generate-pdf">PDF generieren</button>
+    </form>
+    <div id="result" class="accordion-container"></div>
+</div>
+
+<script>
+function submitQuiz() {
+    var form = document.getElementById('quiz-form');
+    var resultContainer = document.getElementById('result');
+    
+    var blockPoints = {
+        '„Sei beliebt!“': { total: 0, maxPossiblePoints: 15 },
+        '„Sei perfekt!“': { total: 0, maxPossiblePoints: 15 },
+        '„Sei selbstständig!“': { total: 0, maxPossiblePoints: 15 },
+        '„Sei effizient!“': { total: 0, maxPossiblePoints: 15 }
+    };
+
+    function calculateBlockPoints(blockName, questionIndices) {
+        var blockTotal = 0;
+        questionIndices.forEach(function(index) {
+            var answer = form.elements['q' + index];
+            if (answer && answer.value !== "") {
+                var selectedValue = parseInt(answer.value);
+                blockTotal += selectedValue;
+            }
+        });
+        blockPoints[blockName].total = blockTotal;
+    }
+
+    calculateBlockPoints('„Sei beliebt!“', [1, 8, 11, 15, 20]);
+    calculateBlockPoints('„Sei perfekt!“', [2, 7, 9, 16, 17]);
+    calculateBlockPoints('„Sei selbstständig!“', [3, 6, 10, 13, 19]);
+    calculateBlockPoints('„Sei effizient!“', [4, 5, 12, 14, 18]);
+
+    var htmlOutput = '';
+    Object.entries(blockPoints).forEach(function([blockName, pointsData]) {
+        htmlOutput += `<div class="accordion">
+                            <button class="accordion-button">${blockName}<span class="accordion-icon">+</span></button>
+                            <div class="panel"><p>${getDescriptionForBlock(blockName)}</p></div>
+                       </div>
+                       <div class="progress">
+                           <div class="progress-bar">
+                               <div class="progress-bar-inner" style="width: ${(pointsData.total / pointsData.maxPossiblePoints) * 100}%;"></div>
+                           </div>
+                           <div class="points">${pointsData.total} / ${pointsData.maxPossiblePoints}</div>
+                       </div>`;
+    });
+
+    resultContainer.innerHTML = htmlOutput;
+    document.querySelectorAll(".accordion-button").forEach(button => {
+        button.addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            panel.style.display = (panel.style.display === "block") ? "none" : "block";
+            this.querySelector(".accordion-icon").textContent = (panel.style.display === "block") ? "-" : "+";
+        });
+    });
+}
+
+function getDescriptionForBlock(blockName) {
+    switch (blockName) {
+        case '„Sei beliebt!“':
+            return 'Das Bedürfnis nach Zugehörigkeit, Akzeptanz und Liebe liegt diesem Stressförderer zu Grunde...';
+        case '„Sei perfekt!“':
+            return 'Diesem Stressförderer liegt der Wunsch nach Selbstbestätigung und Erfolg durch gute Leistungen zu Grunde...';
+        case '„Sei selbstständig!“':
+            return 'Diesem Stressförderer liegt der Wunsch nach persönlicher Unabhängigkeit und Selbstbestimmung zu Grunde...';
+        case '„Sei effizient!“':
+            return 'Hinter diesem Stressförderer steht der Wunsch nach angenehmen Emotionen und Erfahrungen...';
+        default:
+            return 'Details zu den Fragen und Antworten dieser Kategorie.';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('generate-pdf').addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const table = document.getElementById('radio-matrix-table');
+        let data = Array.from(table.querySelectorAll('tr')).map(row => 
+            Array.from(row.querySelectorAll('th, td')).map(cell => cell.innerText || '')
+        );
+
+        doc.autoTable({ head: [data[0]], body: data.slice(1) });
+        doc.save('Stressfoerderer-Test.pdf');
+    });
+});
+</script>
+
+</body>
+</html>
